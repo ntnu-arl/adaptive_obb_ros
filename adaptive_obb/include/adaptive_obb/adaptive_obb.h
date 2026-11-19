@@ -5,13 +5,13 @@
 #include "map_manager/map_manager.h"
 #include "planner_common/params.h"
 
-#include "pcl_ros/point_cloud.h"
+#include <pcl_conversions/pcl_conversions.h>
 #include <pcl/search/impl/search.hpp>
 
 #include <eigen3/Eigen/Dense>
 #include <string>
 
-#include "sensor_msgs/PointCloud2.h"
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
 enum AdaptiveObbType { kPca = 0, kMvbb, kAabb };
 
