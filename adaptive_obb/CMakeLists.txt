@@ -1,21 +1,28 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.8)
 project(adaptive_obb)
-
-add_definitions(-std=c++14)
-
-find_package(catkin_simple REQUIRED)
-find_package(Boost REQUIRED)
-find_package(Eigen3 REQUIRED)
+# ROS 2 (ament) build of the GBPlanner port; sources are the ROS 1 ones with the ROS API ported.
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+add_compile_options(-Wall -Wno-sign-compare -Wno-unused-variable -Wno-unused-but-set-variable -Wno-format -Wno-unused-parameter -Wno-reorder -Werror=return-type)
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(ros1_compat REQUIRED)
 find_package(planner_common REQUIRED)
 find_package(map_manager REQUIRED)
+find_package(pcl_conversions REQUIRED)
+find_package(Eigen3 REQUIRED)
+find_package(PCL REQUIRED)
+find_package(Boost REQUIRED)
+set(EXTRA_LIBS glog gflags)
 
-catkin_simple(ALL_DEPS_REQUIRED)
+add_library(${PROJECT_NAME} SHARED src/genetic_algorithm.cpp src/adaptive_obb.cpp)
+target_include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include> ${PCL_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${EXTRA_LIBS})
+ament_target_dependencies(${PROJECT_NAME} rclcpp ros1_compat planner_common map_manager pcl_conversions)
+install(TARGETS ${PROJECT_NAME} EXPORT export_${PROJECT_NAME} LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 
-cs_add_library(
-  ${PROJECT_NAME}
-  src/genetic_algorithm.cpp
-  src/adaptive_obb.cpp
-)
-
-cs_install()
-cs_export(LIBRARIES)
+install(DIRECTORY include/ DESTINATION include OPTIONAL)
+ament_export_include_directories(include)
+ament_export_dependencies(rclcpp ros1_compat planner_common map_manager pcl_conversions)
+ament_package()

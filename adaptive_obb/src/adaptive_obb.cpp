@@ -1,3 +1,5 @@
+#include <boost/bind/bind.hpp>
+using namespace boost::placeholders;
 #include "adaptive_obb/adaptive_obb.h"
 
 #include <pcl/common/pca.h>
@@ -6,7 +8,8 @@
 #include <pcl/surface/convex_hull.h>
 #include <pcl/filters/voxel_grid.h>
 
-#include <ros/ros.h>
+#include <ros1_compat/node_handle.h>
+#include <planner_msgs/ros2_service_traits.hpp>
 
 #include <limits>
 
